@@ -2,9 +2,9 @@
 
 ![images](./images/design-2-deploy.png)
 
-From this blog, you will learn how to install and uninstall the ML toolkit [Kubeflow](https://www.kubeflow.org/docs/about/kubeflow/) on [Red Hat OpenShift](https://www.kubeflow.org/docs/openshift/install-kubeflow/), what to watchout for and what to expect. The end goal is a tested tutorial steps through the end-to-end installation and uninstallation of Kubeflow on your cluster. 
+From this blog, you will learn how to install and uninstall the ML toolkit [Kubeflow](https://www.kubeflow.org/docs/about/kubeflow/) on [Red Hat OpenShift](https://www.kubeflow.org/docs/openshift/install-kubeflow/), what to watchout for and what to expect. The end goal is a tested tutorial that steps through the end-to-end installation and uninstallation of Kubeflow on your cluster. 
 ## What to Expect
-1. Pull down a local copy of the Kubeflow manifest from github in a woring directory.
+1. Pull down a local copy of the Kubeflow manifest from github in a working directory.
 1. Make necessary edits based on your cluster configuration (e.g. crc requires uncommenting overlay).
 1. Build the deployment from the manifest locally.
 1. Apply the deployment to the cluster.
@@ -61,7 +61,7 @@ wget https://github.com/kubeflow/kfctl/archive/v1.2.0.zip
 unzip v1.2.0.zip
 
 # Move the script into your path
-mv kfctl-1.2.0 /usr/local/bin
+mv kfctl-1.2.0 /usr/local/bin/kfctl
 ```
 
 **Pull down a copy of the target KfDef file**
@@ -92,7 +92,7 @@ Possible file modifications:
 
 This is an optional step if you did not have to make any edits. Otherwise, the build command will generate a .cache and kustomize folder for with change configurations that deploy your configuration to your cluster.
 ```
-kfctl_openshift.yaml build -f ktctl_openshift.yaml -V
+kfctl build -f ktctl_openshift.yaml -V
 ```
 
 Expected result: a .cache and kustomize folder with the manifest subdirs and files contained.
