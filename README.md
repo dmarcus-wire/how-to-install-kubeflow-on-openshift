@@ -8,6 +8,7 @@ From this blog, you will learn how to install and uninstall the ML toolkit [Kube
 1. Make necessary edits based on your cluster configuration (e.g. crc requires uncommenting overlay).
 1. Build the deployment from the manifest locally.
 1. Apply the deployment to the cluster.
+1. command blocks include lines with `# Comments` and cli `commands`
 ## Testing Environment
 These steps were prepared and tested on two variations of Red Hat OpenShift v4.6.9 and Red Hat CodeReady Containers v4.6.9.
 ## Prerequisites
@@ -17,7 +18,7 @@ Before you begin the Installation Procedure, you must have:
 - [x] cluster administrator permissions to the cluster
 - [x] internet access
 - [x] [oc](https://cloud.redhat.com/openshift/install) tool to configure OpenShift
-- [x] [kfctl](https://github.com/kubeflow/kubeflow/releases/)tool to install/uninstall Kubeflow
+- [x] [kfctl](https://github.com/kubeflow/kubeflow/releases/) tool to install/uninstall Kubeflow
 ## Tested Cluster Specifications
 
 1. Red Hat OpenShift Container Platform v4.6.9 host in AWS Control Plane 3 x c5d.2xlarge and Worker Nodes 3 x m5.4xlarge
@@ -33,6 +34,35 @@ mkdir working; cd working
 ```
 > Expected result: you are in a working directory on your local machine to work.
 
+**Install oc command line tool**
+
+Download, unpack and move the oc tool into your path for ease of use.
+
+```
+# Download the oc cli tool that matches your system
+wget https://downloads-openshift-console.apps.cluster-3c14.3c14.example.opentlc.com/amd64/mac/oc.zip
+
+# Unpack the file
+unzip oc.zip
+
+# Move the script into your path
+mv oc /usr/local/bin
+```
+
+**Install kfctl command line tool**
+
+Download, unpack and move the kfctl tool into your path for ease of use.
+
+```
+# Download the version of kfctl tool that matches your system
+wget https://github.com/kubeflow/kfctl/archive/v1.2.0.zip
+
+# Unpack the file
+unzip v1.2.0.zip
+
+# Move the script into your path
+mv kfctl-1.2.0 /usr/local/bin
+```
 
 **Pull down a copy of the target KfDef file**
 
@@ -132,13 +162,61 @@ oc get routes -n istio-system istio-ingressgateway -o jsonpath='http://{.spec.ho
 
 ![image](./images/kubeflow-success.png)
 
-## Uninstallation Procedure
+## Install Procedure Recap
 
 ```
+# Create a working directory
+mkdir working; cd working
+
+# Download, unpack and move the oc and kfctl tools into your path
+wget https://downloads-openshift-console.apps.cluster-3c14.3c14.example.opentlc.com/amd64/mac/oc.zip
+wget https://github.com/kubeflow/kfctl/archive/v1.2.0.zip
+
+# Unpack the files
+unzip oc.zip
+unzip v1.2.0.zip
+
+# Move the scripts into your path
+mv oc /usr/local/bin
+mv kfctl-1.2.0 /usr/local/bin
+
+# Download the kfctl_openshift.yaml file
+wget https://raw.githubusercontent.com/opendatahub-io/manifests/v1.0-branch-openshift/kfdef/kfctl_openshift.yaml
+
+# Make edits based on config (lines 15-33, line 21, etc.)
+vi kfctl_openshift.yaml
+
+# If edits were made
+kfctl build -f kfctl_openshift.yaml
+
+# Log into the cluster via CLI
+oc login --token=<token> --server=https://api.<cluster>.com:6443
+
+# Create Kubeflow namespace
+oc new-project kubeflow
+
+# If no edits were made
+kfctl apply -f kfctl_openshift.yaml
+
+# Get your ingress route
+oc get routes -n istio-system istio-ingressgateway -o jsonpath='http://{.spec.host}/'
+```
+## Uninstall Procedure
+
+Some resources may be cleanedup after running the kfctl delete command.
+
+```
+# Uninstall the deployment
 kfctl delete --file=kfctl_openshift.yaml -V
 rm -rf {.cache,kustomize}
+
+# Delete webhook configurations
 oc delete mutatingwebhookconfigurations.admissionregistration.k8s.io --all
+
 oc delete validatingwebhookconfigurations.admissionregistration.k8s.io --all
+
+# Delete projects
 oc delete project kubeflow
+
 oc delete project istio-system
 ```
