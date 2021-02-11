@@ -24,19 +24,25 @@ Kubeflow v1.2 on Openshift v4.6.9 (Kubernetes v1.19) via CodeReady Containers on
 45 GB disk
 
 ## CRC Modified Configuration
-32 vCPUs
-72 GB memory
+8 vCPUs
+32768 MiB memory
 100 GB disk
 
 ## Modify CodeReady Containers Default Configuration
+1. Create a directory for CRC
 1. Download and install CodeReady Containers following these [Installation Instructions](https://access.redhat.com/documentation/en-us/red_hat_codeready_containers/1.21/html/getting_started_guide/introducing-codeready-containers_gsg)
+1. Unpack the tar file
+1. Move crc into your path
 1. Adjust crc config by increasing cpus, memory and disk
 ```
+# Installation
+mkdir ~/codeready-containers; cd codeready-containers
+wget https://mirror.openshift.com/pub/openshift-v4/clients/crc/latest/crc-linux-amd64.tar.xz
 # changes will apply when 'crc start' is run with config complete
-crc config set cpus 32
-crc config set memory 72
+crc config set cpus 8
+crc config set memory 32768
 crc config set disk-size 100
-crc config set enable-cluster-monitoring
+crc config set enable-cluster-monitoring true
 crc start
 ```
 
